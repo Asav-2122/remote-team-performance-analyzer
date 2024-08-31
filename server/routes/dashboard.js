@@ -1,13 +1,9 @@
-// api.js
+// dashboard.js
 
 const express = require("express");
-const axios = require("axios");
 const router = express.Router();
-
-// Test route
-router.get("/test", (req, res) => {
-  res.json({ message: "API is working" });
-});
+const axios = require("axios");
+const authMiddleware = require("../middleware/auth");
 
 // GitHub API configuration
 const githubApi = axios.create({
@@ -41,16 +37,19 @@ async function getUserCommits(username, repo, since) {
   }
 }
 
-// GitHub data route
-router.get("/github/:username", async (req, res) => {
+// Dashboard route
+router.get("/", authMiddleware, async (req, res) => {
   try {
-    const { username } = req.params;
-    const repos = await getUserRepositories(username);
+    // For this example, we're assuming the GitHub username is stored in the user's profile
+    // You might need to adjust this based on how you're storing the GitHub username
+    const githubUsername = req.user.githubUsername; // You'll need to ensure this is available
+
+    const repos = await getUserRepositories(githubUsername);
     const oneMonthAgo = new Date();
     oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
 
     const commitsPromises = repos.map((repo) =>
-      getUserCommits(username, repo.name, oneMonthAgo.toISOString())
+      getUserCommits(githubUsername, repo.name, oneMonthAgo.toISOString())
     );
     const commitsResults = await Promise.all(commitsPromises);
 
@@ -59,13 +58,18 @@ router.get("/github/:username", async (req, res) => {
       0
     );
 
+    // TODO: Add integrations with other services (Slack, Jira, etc.)
+
     res.json({
-      repositories: repos.length,
-      totalCommits,
+      github: {
+        repositories: repos.length,
+        totalCommits,
+      },
+      // Add other service data here
     });
   } catch (error) {
-    console.error("Error in GitHub route:", error);
-    res.status(500).json({ message: "Error fetching GitHub data" });
+    console.error("Error in dashboard route:", error);
+    res.status(500).json({ message: "Error fetching dashboard data" });
   }
 });
 

@@ -1,4 +1,3 @@
-// src/index.tsx
 import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -8,6 +7,8 @@ import Home from "./pages/Home";
 import Teams from "./pages/Teams";
 import Dashboard from "./pages/Dashboard";
 import Settings from "./pages/Settings";
+import Login from "./pages/Login";
+import SignUp from "./pages/SignUp";
 
 const router = createBrowserRouter([
   {
@@ -16,18 +17,26 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
+        element: <Login />,
+      },
+      {
+        path: "home",
         element: <Home />,
       },
       {
-        path: "Dashboard",
+        path: "signup",
+        element: <SignUp />,
+      },
+      {
+        path: "dashboard",
         element: <Dashboard />,
       },
       {
-        path: "Teams",
+        path: "teams",
         element: <Teams />,
       },
       {
-        path: "Settings",
+        path: "settings",
         element: <Settings />,
       },
     ],

@@ -21,7 +21,7 @@ jobs:
       run: npm ci
 
     - name: Run ESLint
-      run: npx eslint '**/*.{js,jsx,ts,tsx}'
+  run: npx eslint .
 
     - name: Run Stylelint
       run: npx stylelint '**/*.{css,scss}'

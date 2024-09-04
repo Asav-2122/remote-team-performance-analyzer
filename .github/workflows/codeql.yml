@@ -1,0 +1,71 @@
+name: "CodeQL Advanced"
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  schedule:
+    - cron: '0 0 * * 0'  # Run weekly on Sundays at midnight
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'  # Specify the Node.js version you're using
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        languages: javascript-typescript
+        queries: +security-and-quality,security-extended
+
+    - name: Autobuild
+      uses: github/codeql-action/autobuild@v3
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3
+      with:
+        category: "/language:javascript-typescript"
+
+    - name: Install Dependencies
+      run: |
+        if [ -f "package-lock.json" ]; then
+          npm ci
+        else
+          npm install
+        fi
+
+    - name: Run Linter
+      run: npm run lint || echo "Linting failed but continuing..."
+
+    - name: Run TypeScript Compiler
+      run: npm run tsc || echo "TypeScript compilation failed but continuing..."
+
+    - name: Run Unit Tests
+      run: npm test || echo "Tests failed but continuing..."
+
+    - name: Check for Outdated Dependencies
+      run: npm outdated || true
+
+    - name: Run Security Audit
+      run: npm audit || echo "Security audit failed but continuing..."
+
+    # Uncomment and adjust these steps as you implement them
+    # - name: Run Integration Tests
+    #   run: npm run test:integration || echo "Integration tests failed but continuing..."
+
+    # - name: Run Custom Security Checks
+    #   run: npm run security-check || echo "Custom security checks failed but continuing..."

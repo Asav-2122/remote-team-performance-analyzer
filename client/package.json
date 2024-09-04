@@ -5,11 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "lint": "eslint .",
   "tsc": "tsc --noEmit",
-  "test": "jest"
+  "test": "jest",
+  "lint": "eslint '**/*.{js,jsx,ts,tsx}' && stylelint '**/*.{css,scss}'",
+  "format": "prettier --write '**/*.{js,jsx,ts,tsx,html,css,scss}'",
+  "type-check": "tsc --noEmit",
+  "build": "webpack --config webpack.config.js"
   },
   "dependencies": {
     "axios": "^1.7.7",

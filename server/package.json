@@ -5,9 +5,12 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "lint": "eslint .",
     "tsc": "tsc --noEmit",
-    "test": "jest"
+    "test": "jest",
+    "lint": "eslint '**/*.{js,jsx,ts,tsx}' && stylelint '**/*.{css,scss}'",
+  "format": "prettier --write '**/*.{js,jsx,ts,tsx,html,css,scss}'",
+  "type-check": "tsc --noEmit",
+  "build": "webpack --config webpack.config.js"
   },
   "keywords": [],
   "author": "",
